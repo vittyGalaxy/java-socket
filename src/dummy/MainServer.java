@@ -1,12 +1,12 @@
 package dummy;
 
-import dummy.tcp.ServerTCP;
+import dummy.calculator.ServerTcpCalculator;
 
 public class MainServer {
     public static void main(String[] args){
-        ServerTCP serverVitto = new ServerTCP(20000, "VittoServer");
-        serverVitto.start();
-        serverVitto.communicate();
+        ServerTcpCalculator server = new ServerTcpCalculator("Server", 20000);
+        server.start();
+        server.communicate();
     }
     
 }
