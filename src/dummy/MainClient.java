@@ -1,10 +1,10 @@
 package dummy;
 
-import dummy.calculator.ClientTcpCalculator;
+import dummy.bomb.ClientTcpBomb;
 
 public class MainClient {
     public static void main(String[] args){
-        ClientTcpCalculator client = new ClientTcpCalculator("Client", "127.0.0.1", 20000);
+        ClientTcpBomb client = new ClientTcpBomb("Client", "127.0.0.1", 20000);
         client.start();
         client.communicate();
     }

@@ -1,10 +1,10 @@
 package dummy;
 
-import dummy.calculator.ServerTcpCalculator;
+import dummy.bomb.ServerTcpBomb;
 
 public class MainServer {
     public static void main(String[] args){
-        ServerTcpCalculator server = new ServerTcpCalculator("Server", 20000);
+        ServerTcpBomb server = new ServerTcpBomb("Server", 20000);
         server.start();
         server.communicate();
     }
