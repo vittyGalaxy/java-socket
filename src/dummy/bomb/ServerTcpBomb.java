@@ -2,12 +2,15 @@ package dummy.bomb;
 
 import java.net.ServerSocket;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.net.Socket;
 import java.util.Random;
+
+enum State{
+    wait, execute, explode
+}
 
 public class ServerTcpBomb {
     ServerSocket    server;   
@@ -63,27 +66,48 @@ public class ServerTcpBomb {
     public void communicate() {
         Random rand = new Random();
         int bomb = rand.nextInt(100);
+        State state = State.wait;
+        boolean isExploded = false;
         try {
             while(true) {
-                String messageFromClient = inputFromClient.readLine();
-                System.out.println("Message Received");
-
-                if ("quit".equalsIgnoreCase(messageFromClient.trim())) {
-                    String byeMessage = "BYE";
-                    outputToClient.writeBytes(byeMessage + "\n");
-                    break;
+                if (isExploded) {
+                    break;                    
                 }
+                switch (state) {
+                    case wait:
+                        String messageFromClient = inputFromClient.readLine();
+                        if ("Init".equalsIgnoreCase(messageFromClient.trim())){
+                            System.out.println("Init Received");
+                            state = State.execute;
+                        }
+                        break;
+                
+                    case execute:
+                        System.out.println(bomb);
+                        if (bomb == 0){
+                            System.out.println("boom");
+                            state = State.explode;
+                            break;
+                        } else if(bomb == 1){
+                            String outBomb = String.valueOf(bomb);
+                            outputToClient.writeBytes(outBomb + "\n");
+                            state = State.explode;
+                            break;
+                        }
+                        String outBomb = String.valueOf(bomb);
+                        outputToClient.writeBytes(outBomb + "\n");
+                        messageFromClient = inputFromClient.readLine();
+                        bomb = Integer.parseInt(messageFromClient);
+                        bomb--;
+                        break;
 
-                String result = "Received ok";
-                outputToClient.writeBytes(result + "\n");
-                System.out.println("[SERVER] Send: " + result);
-                bomb--;
-                if (bomb == 0){
-                    System.out.println("boom");
-                    break;
+                    case explode:
+                        isExploded = true;
+
+                    default:
+                        break;
                 }
-                String outBomb = String.valueOf(bomb);
-                outputToClient.writeBytes(outBomb);
+                
             }
         } catch (IOException ex) {
             System.out.println("Error.");

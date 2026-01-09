@@ -5,7 +5,7 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.util.Scanner;
+// import java.util.Scanner;
 
 public class ClientTcpBomb {
     String              name;
@@ -14,7 +14,6 @@ public class ClientTcpBomb {
     Socket              socket;
     BufferedReader      inputfromServer;
     DataOutputStream    outputToServer;
-    Scanner             keyboard;
 
     public ClientTcpBomb(String name, String ip, int port){
         setName(name);
@@ -53,14 +52,16 @@ public class ClientTcpBomb {
         System.out.println("[CLIENT] Connection Attempt");
         try {
             socket = new Socket(ip, port);
+
+            inputfromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            outputToServer = new DataOutputStream(socket.getOutputStream());
             if (socket.isConnected()){
                 System.out.println("Connected");
+                String initMsg = "Init";
+                outputToServer.writeBytes(initMsg + "\n");
             }else{
                 System.out.println("Not Connected");
             }
-            inputfromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            outputToServer = new DataOutputStream(socket.getOutputStream());
-            keyboard = new Scanner(System.in);
         } catch(IOException ex){
             System.out.println("Error.");
             System.exit(1);
@@ -70,23 +71,20 @@ public class ClientTcpBomb {
     public void communicate(){
         try {
             while (true) {
-                String message = keyboard.nextLine();
-                outputToServer.writeBytes(message + "\n");
                 String messageFromServer = inputfromServer.readLine();
                 int bomb = Integer.parseInt(messageFromServer);
                 bomb--;
+                System.out.println(bomb);
                 if (bomb == 0){
                     System.out.println("boom");
                     break;
-                }
-                String outbomb = String.valueOf(bomb);
-                outputToServer.writeBytes(outbomb);
-                System.out.println("[CLIENT] Received: " + messageFromServer);
-
-                if ("bye".equalsIgnoreCase(messageFromServer.trim())){
-                    System.out.println("[CLIENT] Server Closed");
+                }else if(bomb == 1){
+                    String outbomb = String.valueOf(bomb);
+                    outputToServer.writeBytes(outbomb + "\n");
                     break;
                 }
+                String outbomb = String.valueOf(bomb);
+                outputToServer.writeBytes(outbomb + "\n");
             }
         } catch(IOException ex){
             System.out.println("Error commuinication.");
