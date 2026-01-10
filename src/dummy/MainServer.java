@@ -1,12 +1,11 @@
 package dummy;
 
-import dummy.bomb.ServerTcpBomb;
+import dummy.udp.ServerUdp;;
 
 public class MainServer {
     public static void main(String[] args){
-        ServerTcpBomb server = new ServerTcpBomb("Server", 20000);
+        ServerUdp server = new ServerUdp(7849);
         server.start();
         server.communicate();
     }
-    
 }

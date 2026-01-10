@@ -1,10 +1,10 @@
 package dummy;
 
-import dummy.bomb.ClientTcpBomb;
+import dummy.udp.ClientUdp;;
 
 public class MainClient {
     public static void main(String[] args){
-        ClientTcpBomb client = new ClientTcpBomb("Client", "127.0.0.1", 20000);
+        ClientUdp client = new ClientUdp(7849, "127.0.0.1");
         client.start();
         client.communicate();
     }
