@@ -60,6 +60,9 @@ public class ServerUdp {
                 bufferOUT = toShip.getBytes();
                 sendPacket = new DatagramPacket(bufferOUT, bufferOUT.length, receivePacket.getAddress(), receivePacket.getPort());
                 serverSocket.send(sendPacket);
+                if ("bye".equalsIgnoreCase(toShip)){
+                    break;
+                }
             }
         } catch (Exception e){
             System.out.println("Error...");
